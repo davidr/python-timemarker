@@ -10,7 +10,7 @@ setup(
     license='MIT',
     description='Simple arbitrary time measurement tool',
     include_package_data=True,
-    url='https://github.com/davidr/python-timermarker',
+    url='https://github.com/davidr/python-timemarker',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',

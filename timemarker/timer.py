@@ -64,7 +64,7 @@ class TimeMarker(object):
 
         Args:
             tag: name of timer tag
-            _override: override checking for reserved tags (don't use this)
+            _override: override checking for reserved tags *Warning: don't use this!*
 
         Returns:
             None
@@ -91,7 +91,7 @@ class TimeMarker(object):
               oneline: bool = True,
               print_function: Callable = print,
               pctg_cap: float = 1.):
-        """Print out TimerMarker stats
+        """Print out TimeMarker stats
 
         Args:
             sort: if True, results are sorted by time taken, else in the order in which they were
