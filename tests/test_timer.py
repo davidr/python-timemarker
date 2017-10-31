@@ -22,6 +22,15 @@ class TestBasics(object):
         assert isinstance(timer, timemarker.TimeMarker)
 
 
+class TestExceptions(object):
+
+    def test_badtag(self):
+        for tag_name in ['start', 'stop']:
+            with pytest.raises(ValueError):
+                with timemarker.TimeMarker() as timer:
+                    timer.tag(tag_name)
+
+
 class TestPctgTimer(object):
 
     def test_onetag_pctg(self, capsys):
