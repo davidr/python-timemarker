@@ -26,8 +26,8 @@ class TimeMarker(object):
         '_last_ts'
     ]
 
-    reserved_tags = ['start', 'stop']
-    stats_formats = ['percentage', 'raw']
+    _reserved_tags = ['start', 'stop']
+    _stats_formats = ['percentage', 'raw']
 
     def __init__(self):
         self._start: float = None
@@ -73,7 +73,7 @@ class TimeMarker(object):
             ValueError: if given invalid tag name
 
         """
-        if tag in TimeMarker.reserved_tags and _override is False:
+        if tag in TimeMarker._reserved_tags and _override is False:
             raise ValueError('tag name {} is reserved'.format(tag))
 
         _ts = default_timer()
@@ -110,7 +110,7 @@ class TimeMarker(object):
 
         if not 0. < pctg_cap <= 1.:
             raise ValueError('pctg must be < 0., <= 1.')
-        elif fmt not in TimeMarker.stats_formats:
+        elif fmt not in TimeMarker._stats_formats:
             raise ValueError('"{:s}" not a valid stats formatter')
         elif pctg_cap < 1. and fmt != "percentage":
             raise ValueError('pctg_cap < 1. requires fmt="percentage"')
