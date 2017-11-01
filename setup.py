@@ -26,7 +26,7 @@ setup(
     tests_require=['pytest'],
     extras_require=dict(
         test=['coveralls', 'pytest'],
-        build=['sphinx', 'pkginfo', 'setuptools-git', 'twine', 'wheel']
+        build=['sphinx', 'pkginfo', 'setuptools-git', 'twine', 'wheel', 'sphinxcontrib-napoleon']
     )
 )
 
