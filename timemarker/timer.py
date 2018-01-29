@@ -2,11 +2,13 @@
 
 import logging
 from operator import itemgetter
-from typing import List, Tuple, Callable
+from typing import List, Tuple, Callable, Dict
 
 # TODO(davidr) is it faster to do this here or to save the function as an attribute of the
 # class instance?
 from timeit import default_timer
+
+from collections import defaultdict
 
 _logger = logging.getLogger(__name__)
 
@@ -22,8 +24,8 @@ class TimeMarker(object):
     """
 
     __slots__ = [
-        '_start', '_end', '_tag_timing', '_cumulative_time', '_last_tag',
-        '_last_ts'
+        '_start', '_end', '_cumulative_time', '_last_tag', '_last_ts',
+        '_timing'
     ]
 
     _reserved_tags = ['start', 'stop']
@@ -33,7 +35,7 @@ class TimeMarker(object):
         self._start: float = None
         self._end: float = None
 
-        self._tag_timing: List[Tuple[str, float]] = []
+        self._timing: Dict[str, float] = defaultdict(lambda: 0.0)
 
         self._cumulative_time: float = None
 
@@ -79,7 +81,7 @@ class TimeMarker(object):
         _ts = default_timer()
         self._cumulative_time = _ts - self._start
 
-        self._tag_timing.append((self._last_tag, _ts - self._last_ts))
+        self._timing[self._last_tag] += _ts - self._last_ts
         self._last_tag = tag
         self._last_ts = _ts
 
@@ -107,6 +109,8 @@ class TimeMarker(object):
             None
 
         """
+        if fmt not in ['percentage', 'raw']:
+            raise ValueError(f'Invalid format: {fmt}')
 
         if not 0. < pctg_cap <= 1.:
             raise ValueError('pctg must be < 0., <= 1.')
@@ -119,37 +123,41 @@ class TimeMarker(object):
 
         tag_separator = " " if oneline else "\n  - "
         tag_suffix = ""
-        stats: List[str] = list()
-        tags: List[Tuple[str, float]] = self._tag_timing
+        stats = list()
+        timing_results = list(self._timing.items())
 
         stats.append("TIME:{:.6f}s".format(self._cumulative_time))
 
         if sort:
             # Sort by the time value of the tag
-            tags = sorted(tags, key=itemgetter(1), reverse=True)
+            timing_results = sorted(
+                timing_results, key=itemgetter(1), reverse=True)
 
         if fmt == "raw":
             tag_suffix = "s"
 
         elif fmt == "percentage":
-            running_pctg = 0.
-            tags_pctg: List[Tuple[str, float]] = list()
+            timing_results = self._calculate_tag_percentage(
+                self._cumulative_time, pctg_cap, timing_results)
 
-            for tag, ts in tags:
-                tag_pctg = ts / self._cumulative_time
-
-                # if we have a cap of the percentage of time we want accounted for, see if we've
-                # gone over
-                running_pctg += tag_pctg
-                if running_pctg > pctg_cap:
-                    break
-
-                tags_pctg.append((tag, tag_pctg))
-
-            tags = tags_pctg
-
-        for tag, duration in tags:
+        for tag, duration in timing_results:
             stats.append("{:s}:{:02.3f}{:s}".format(tag, duration, tag_suffix))
 
         stats_string = tag_separator.join(stats)
         print_function(stats_string)
+
+    @staticmethod
+    def _calculate_tag_percentage(cumulative_time, pctg_cap, timing_results):
+        running_pctg = 0.
+        tags_pctg: List[Tuple[str, float]] = list()
+        for tag, ts in timing_results:
+            tag_pctg = ts / cumulative_time
+
+            # if we have a cap of the percentage of time we want accounted for, see if we've
+            # gone over
+            running_pctg += tag_pctg
+            if running_pctg > pctg_cap:
+                break
+
+            tags_pctg.append((tag, tag_pctg))
+        return tags_pctg

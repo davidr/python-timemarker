@@ -102,6 +102,23 @@ class TestRawTimer(object):
         assert out_dict['sleep_100ms_1'] == pytest.approx(.1, abs=1e-2)
         assert out_dict['sleep_100ms_2'] == pytest.approx(.1, abs=1e-2)
 
+
+class TestTagging(object):
+    def test_tag_aggregation(self, capsys):
+        with timemarker.TimeMarker() as timer:
+            # Run this test twice and see if the the same tags are aggregated
+            for i in range(2):
+                timer.tag("sleep_100ms_1")
+                sleep(.1)
+                timer.tag("sleep_100ms_2")
+                sleep(.1)
+        timer.stats(fmt='raw')
+
+        out, err = capsys.readouterr()
+        assert err == ''
+        assert out != ''
+        out_dict = split_oneline(out)
+
         assert out_dict['TIME'] == pytest.approx(0.4, abs=1e-2)
         assert out_dict['start'] == pytest.approx(0.0, abs=1e-2)
         assert out_dict['sleep_100ms_1'] == pytest.approx(.2, abs=1e-2)
