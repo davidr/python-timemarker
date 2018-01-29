@@ -44,9 +44,9 @@ class TestPctgTimer(object):
         assert out != ''
         out_dict = split_oneline(out)
 
-        assert out_dict['TIME'] == pytest.approx(0.1, abs=1e-3)
-        assert out_dict['start'] == pytest.approx(0.0, abs=1e-3)
-        assert out_dict['sleep_100ms'] == pytest.approx(1.0, abs=1e-3)
+        assert out_dict['TIME'] == pytest.approx(0.1, abs=1e-2)
+        assert out_dict['start'] == pytest.approx(0.0, abs=1e-2)
+        assert out_dict['sleep_100ms'] == pytest.approx(1.0, abs=1e-2)
 
     def test_twotag_pctg(self, capsys):
         with timemarker.TimeMarker() as timer:
@@ -61,15 +61,15 @@ class TestPctgTimer(object):
         assert out != ''
         out_dict = split_oneline(out)
 
-        assert out_dict['TIME'] == pytest.approx(0.2, abs=1e-3)
-        assert out_dict['start'] == pytest.approx(0.0, abs=1e-3)
-        assert out_dict['sleep_100ms_1'] == pytest.approx(.5, abs=1e-3)
-        assert out_dict['sleep_100ms_2'] == pytest.approx(.5, abs=1e-3)
+        assert out_dict['TIME'] == pytest.approx(0.2, abs=1e-2)
+        assert out_dict['start'] == pytest.approx(0.0, abs=1e-2)
+        assert out_dict['sleep_100ms_1'] == pytest.approx(.5, abs=1e-2)
+        assert out_dict['sleep_100ms_2'] == pytest.approx(.5, abs=1e-2)
 
 
 class TestRawTimer(object):
 
-    def test_onetag_pctg(self, capsys):
+    def test_onetag_raw(self, capsys):
         with timemarker.TimeMarker() as timer:
             timer.tag("sleep_100ms")
             sleep(.1)
@@ -80,11 +80,11 @@ class TestRawTimer(object):
         assert out != ''
         out_dict = split_oneline(out)
 
-        assert out_dict['TIME'] == pytest.approx(0.1, abs=1e-3)
-        assert out_dict['start'] == pytest.approx(0.0, abs=1e-3)
-        assert out_dict['sleep_100ms'] == pytest.approx(.1, abs=1e-3)
+        assert out_dict['TIME'] == pytest.approx(0.1, abs=1e-2)
+        assert out_dict['start'] == pytest.approx(0.0, abs=1e-2)
+        assert out_dict['sleep_100ms'] == pytest.approx(.1, abs=1e-2)
 
-    def test_twotag_pctg(self, capsys):
+    def test_twotag_raw(self, capsys):
         with timemarker.TimeMarker() as timer:
             timer.tag("sleep_100ms_1")
             sleep(.1)
@@ -97,9 +97,13 @@ class TestRawTimer(object):
         assert out != ''
         out_dict = split_oneline(out)
 
-        assert out_dict['TIME'] == pytest.approx(0.2, abs=1e-3)
-        assert out_dict['start'] == pytest.approx(0.0, abs=1e-3)
-        assert out_dict['sleep_100ms_1'] == pytest.approx(.1, abs=1e-3)
-        assert out_dict['sleep_100ms_2'] == pytest.approx(.1, abs=1e-3)
+        assert out_dict['TIME'] == pytest.approx(0.2, abs=1e-2)
+        assert out_dict['start'] == pytest.approx(0.0, abs=1e-2)
+        assert out_dict['sleep_100ms_1'] == pytest.approx(.1, abs=1e-2)
+        assert out_dict['sleep_100ms_2'] == pytest.approx(.1, abs=1e-2)
 
+        assert out_dict['TIME'] == pytest.approx(0.4, abs=1e-2)
+        assert out_dict['start'] == pytest.approx(0.0, abs=1e-2)
+        assert out_dict['sleep_100ms_1'] == pytest.approx(.2, abs=1e-2)
+        assert out_dict['sleep_100ms_2'] == pytest.approx(.2, abs=1e-2)
 
